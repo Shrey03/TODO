@@ -1,5 +1,9 @@
+import React from "react";
+import List from "./components/List/List";
+import NewList from "./components/NewList/NewList";
+
 function App() {
-  return <h1>Start</h1>;
+  return <List></List>;
 }
 
 export default App;
