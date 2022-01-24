@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ErrorModal from "../UI/ErrorModal";
 import Card from "../UI/Card";
 import classes from "./NewList.module.css";
 
@@ -6,10 +7,23 @@ const NewList = (props) => {
   const [enteredTaskname, setEnteredTaskname] = useState("");
   const [enteredTaskdate, setEnteredTaskdate] = useState("");
   const [enteredTasktype, setEnteredTasktype] = useState("");
+  const [error, setError] = useState();
 
   const addListHandler = (event) => {
     event.preventDefault();
-    console.log(enteredTaskname, enteredTaskdate, enteredTasktype);
+    if (
+      enteredTaskname.trim().length === 0 ||
+      enteredTasktype.trim().length === 0 ||
+      enteredTaskdate.toString().trim().length === 0
+    ) {
+      setError({
+        title: "InValid! input",
+        message: "Please enter valid input",
+      });
+      console.log("ERROR!!");
+      return;
+    }
+    props.onAddTask(enteredTaskname, enteredTaskdate, enteredTasktype);
     setEnteredTaskname("");
     setEnteredTasktype("");
     setEnteredTaskdate("");
@@ -25,8 +39,19 @@ const NewList = (props) => {
     setEnteredTasktype(event.target.value);
   };
 
+  const errorHandler = () => {
+    setError(null);
+  };
+
   return (
     <div>
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        ></ErrorModal>
+      )}
       <Card className={classes.form}>
         <form onSubmit={addListHandler}>
           <label htmlFor="taskname">Enter Task Name</label>
@@ -52,7 +77,12 @@ const NewList = (props) => {
             onChange={tasktypeChangeHandler}
             placeholder="Personal or Project"
           ></input>
-          <button type="submit"> Add Task</button>
+          <div className={classes.buttonStyles}>
+            <button type="button" onClick={props.onCancel}>
+              Cancel
+            </button>
+            <button type="submit"> Add Task</button>
+          </div>
         </form>
       </Card>
     </div>
